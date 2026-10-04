@@ -200,10 +200,12 @@ def main():
         assert any(a.get("role") == "option" for a in page["actions"])
         passed.append("real text input waits for asynchronous combobox suggestions")
 
+        # Keep all 260 buttons independently hittable when covered controls are filtered out.
         browser.evaluate("""document.body.innerHTML=
           '<section id="dense-feed" aria-label="Dense results" style="position:fixed;left:500px;top:140px;'
           +'width:320px;height:180px;overflow-y:auto"><div style="height:800px">Results</div></section>'
-          +Array.from({length:260},(_,i)=>'<button style="position:fixed;left:0;top:0">Button '
+          +Array.from({length:260},(_,i)=>'<button style="position:fixed;left:'+(i%12)*40+'px;top:'
+          +Math.floor(i/12)*26+'px;width:38px;height:24px;padding:0;overflow:hidden">Button '
           +i+'</button>').join('')""")
         page = browser.observe(screenshot=False)
         labels = {a["label"] for a in page["actions"]}
